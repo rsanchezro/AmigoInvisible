@@ -77,6 +77,7 @@ public class RellenarGrupoActivity extends AppCompatActivity {
 //Vacio los editText
             nombre.setText("");
             email.setText("");
+            nombre.requestFocus();
             if (miembros.size() == 3) {
                 //Inflo el menu GUARDAR
                 barra.inflateMenu(R.menu.menu_guardar);
