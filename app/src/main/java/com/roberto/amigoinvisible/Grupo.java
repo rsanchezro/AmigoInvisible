@@ -6,10 +6,17 @@ import android.os.Parcelable;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Grupo implements Serializable {
+public class Grupo  {
     private String nombre;
     private ArrayList<Miembro> miembros;
 
+    public void añadir_Miembro(Miembro m)
+    {
+        if(miembros!=null)
+        {
+            miembros.add(m);
+        }
+    }
     public int getnumMiembros()
     {
         return miembros.size();
@@ -34,6 +41,22 @@ public class Grupo implements Serializable {
     public Grupo(String nombre) {
         miembros=new ArrayList<Miembro>();
         this.nombre = nombre;
+    }
+
+    public boolean buscarMiembro(String nombre)
+    {
+        boolean encontrado=false;
+        int i=0;
+        while(i<miembros.size()&&!encontrado)
+        {
+            if((nombre.toLowerCase()).compareTo(miembros.get(i).getNombre().toLowerCase())==0)
+            {
+                encontrado=true;
+            }
+            i++;
+
+        }
+        return encontrado;
     }
 
 

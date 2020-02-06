@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AdaptadorMiembroGrupo extends RecyclerView.Adapter<AdaptadorMiembroGrupo.Miholder> {
    private AppCompatActivity contexto;
@@ -26,6 +27,11 @@ public class AdaptadorMiembroGrupo extends RecyclerView.Adapter<AdaptadorMiembro
     public Miembro getElementoLista(int posicion)
     {
         return elementos.get(posicion);
+    }
+    public void setElementosLista(ArrayList<Miembro> lis)
+    {
+        elementos=lis;
+        notifyDataSetChanged();
     }
     public void añadir_elementoLista(Miembro l)
     {

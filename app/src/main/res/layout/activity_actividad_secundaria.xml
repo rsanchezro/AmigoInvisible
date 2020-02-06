@@ -25,7 +25,10 @@
 
     <include
         layout="@layout/content_secundario"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginBottom="?attr/actionBarSize" />
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomnavegacion"
             android:layout_width="match_parent"

@@ -1,5 +1,7 @@
 package com.roberto.amigoinvisible;
 
+import androidx.annotation.NonNull;
+
 public class Miembro {
     private String nombre;
     private String email;
@@ -35,6 +37,9 @@ public class Miembro {
         this.restriccion = restriccion;
     }
 
-
-
+    @NonNull
+    @Override
+    public String toString() {
+        return this.nombre;
+    }
 }

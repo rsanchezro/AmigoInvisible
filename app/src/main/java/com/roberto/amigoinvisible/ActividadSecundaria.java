@@ -44,9 +44,12 @@ public class ActividadSecundaria extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id=item.getItemId();
+        Intent i=getIntent();
         switch (id)
         {
             case android.R.id.home:
+                i.putExtra("posicion",posicion);
+                setResult(1,i);
                 finish();
                 break;
 

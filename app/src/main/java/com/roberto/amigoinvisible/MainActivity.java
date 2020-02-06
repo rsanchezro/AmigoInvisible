@@ -354,6 +354,12 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 break;
+            case EDICION_MIEMBROS:
+                if(resultCode==1)
+                {
+                    //Repinto los elementos de la lista
+                    adaptador.notifyItemChanged(data.getExtras().getInt("posicion"));
+                }
         }
 
 
