@@ -26,15 +26,17 @@ public class RellenarGrupoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rellenar_grupo);
-
+    //Obtengo la posicion del elemento que se ha clickado
+        posicion=getIntent().getExtras().getInt("posicion");
         //Añadir la flecha hacia atras
         barra=findViewById(R.id.toolbarrellenar_grupo);
+        //Establezco el titulo
+       barra.setTitle("GRUPO: "+MainActivity.adaptador.getElementoLista(posicion).getNombre());
         setSupportActionBar(barra);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //Obtengo la posicion del elemento que se ha clickado
-        posicion=getIntent().getExtras().getInt("posicion");
-        //Establezco el titulo
-        barra.setTitle("GRUPO: "+MainActivity.adaptador.getElementoLista(posicion).getNombre());
+
+
+
         //Instancio el array miembros
         miembros=new ArrayList<Miembro>();
         nombre=findViewById(R.id.nombre_editText);
@@ -47,14 +49,15 @@ public class RellenarGrupoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id=item.getItemId();
+        Intent i=getIntent();
         switch (id)
         {
             case android.R.id.home:
+                setResult(1,i);
                 finish();
                 break;
             case R.id.guardar:
                 MainActivity.adaptador.getElementoLista(posicion).setMiembros(miembros);
-                Intent i=getIntent();
                 i.putExtra("posicion",posicion);
                 setResult(0,i);
                 finish();
@@ -71,7 +74,9 @@ public class RellenarGrupoActivity extends AppCompatActivity {
             miembros.add(new Miembro(nombre.getText().toString(), email.getText().toString(), null));
 
             lista.append("Nombre: " + nombre.getText() + " email: " + email.getText() + "\n");
-
+//Vacio los editText
+            nombre.setText("");
+            email.setText("");
             if (miembros.size() == 3) {
                 //Inflo el menu GUARDAR
                 barra.inflateMenu(R.menu.menu_guardar);

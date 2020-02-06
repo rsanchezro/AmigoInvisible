@@ -24,12 +24,15 @@ public class ActividadSecundaria extends AppCompatActivity {
         setContentView(R.layout.activity_actividad_secundaria);
         //Añadir la flecha hacia atras
         barra=findViewById(R.id.toolbarsecundaria);
-        setSupportActionBar(barra);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //Obtengo la posicion del elemento que se ha clickado
         posicion=getIntent().getExtras().getInt("posicion");
+
         //Establezco el titulo
         barra.setTitle("GRUPO: "+MainActivity.adaptador.getElementoLista(posicion).getNombre());
+        setSupportActionBar(barra);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         //Cargo el fragmento miembros_grupo
         getSupportFragmentManager()
                 .beginTransaction()

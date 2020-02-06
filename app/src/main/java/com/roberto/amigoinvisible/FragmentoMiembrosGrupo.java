@@ -1,9 +1,11 @@
 package com.roberto.amigoinvisible;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -13,6 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 /**
@@ -39,6 +45,31 @@ public class FragmentoMiembrosGrupo extends Fragment {
         this.contexto=(AppCompatActivity)getActivity();
         //Preparo el recyclerview
         preparar_ReciclerView(v,R.id.recycler_listado_miembros);
+        FloatingActionButton f=v.findViewById(R.id.fab_miembros_grupo);
+        f.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Abrir dialogo para añadir una nuevo amigo a la lista de amigos
+                final EditText nombre = new EditText(MainActivity.this);
+                nombre.setHint("Nombre");
+                LinearLayout mi_layout = new LinearLayout(MainActivity.this);
+                mi_layout.setOrientation(LinearLayout.VERTICAL);
+                mi_layout.addView(nombre);
+                AlertDialog.Builder builderDialog = new AlertDialog.Builder(MainActivity.this);
+
+                builderDialog.setTitle("NUEVO GRUPO DE AMIGUETES");
+                //De esta forma evitamos que al pulsar el boton de atras salgamos del cuadro de dialogo
+                builderDialog.setCancelable(false);
+                builderDialog.setView(mi_layout);
+                builderDialog.setPositiveButton("CREAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        //Sobrescribo para no hacer nada, para validar la entrada y controllar
+                        //que el usuario introduzca texto
+                    }
+                });
+            }
+        });
         return v;
 
     }
