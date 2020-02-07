@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class AdaptadorMiembroGrupo extends RecyclerView.Adapter<AdaptadorMiembroGrupo.Miholder> {
    private AppCompatActivity contexto;
@@ -81,6 +81,23 @@ public class AdaptadorMiembroGrupo extends RecyclerView.Adapter<AdaptadorMiembro
 
 
 
+    }
+/*
+Busca un elemento y devuelve su posicion en la lista
+Si no lo encuentra devuelve -1
+ */
+    public Miembro buscarMiembro(String n)
+    {
+        int i=0;
+        while(i<elementos.size())
+        {
+            if((n.toLowerCase()).compareTo(elementos.get(i).getNombre().toLowerCase())==0)
+            {
+                return elementos.get(i);
+            }
+            i++;
+        }
+       return null;
     }
 
     @Override

@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 
 /**
@@ -162,13 +163,13 @@ public class FragmentoMiembrosGrupo extends Fragment {
                 }
 
 
-
                 AlertDialog.Builder builderDialog = new AlertDialog.Builder(getActivity());
 
                 builderDialog.setTitle("EDICION DE "+ adaptador.getElementoLista(pos));
                 //De esta forma evitamos que al pulsar el boton de atras salgamos del cuadro de dialogo
                 builderDialog.setCancelable(false);
-                builderDialog.setView(R.layout.edicionmiembro_layout);
+                builderDialog.setView(getActivity().getLayoutInflater().inflate(R.layout.edicionmiembro_layout,null));
+
 
                 builderDialog.setPositiveButton("EDITAR", new DialogInterface.OnClickListener() {
                     @Override
@@ -188,20 +189,40 @@ public class FragmentoMiembrosGrupo extends Fragment {
                 final EditText nombre=(EditText)dialogo.findViewById(R.id.Nombre_miembro_ed);
                 final EditText email=(EditText)dialogo.findViewById(R.id.email_miembro_ed);
                 final Spinner spinner=(Spinner)dialogo.findViewById(R.id.spinner_restriccion);
+
+
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,nombremiembros); //selected item will look like a spinner set from XML
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(spinnerArrayAdapter);
                 //Añado los datos al spinner
-                spinner.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, nombremiembros));
+
                 //Establezco los valores a cada elemento
                 nombre.setText(adaptador.getElementoLista(pos).getNombre());
                 email.setText(adaptador.getElementoLista(pos).getEmail());
-                if(adaptador.getElementoLista(pos)!=null) {
-                    //Tendre que averiguar que elemento de la lista es
-                    int elemento_restricion = MainActivity.adaptador.getElementoLista(posicion).getMiembros().indexOf(adaptador.getElementoLista(pos).getRestriccion());
-                    spinner.setSelection(elemento_restricion);
+                Miembro restriccion=adaptador.getElementoLista(pos).getRestriccion();
+                if(restriccion!=null) {
+                    //Tendre que averiguar que elemento de la lista es el que tiene en la restriccion,
+                    //para marcarlo
+                    int i=1;
+                    boolean encotrado=false;
+                    while((i<spinner.getAdapter().getCount())&&!encotrado)
+                    {
+                        if(((String)spinner.getAdapter().getItem(i)).equals(restriccion.getNombre()))
+                        {
+                            encotrado=true;
+                        }
+                        else {
+                            i++;
+                        }
+                    }
+                    spinner.setSelection(i);
+
 
                 }
                 //Para evitar salir del cuadro de dialogo
                 dialogo.setCanceledOnTouchOutside(false);
                 dialogo.show();
+
                 //Sobrescribo la acción OnClick del boton positivo para controlar la entrada
                 dialogo.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -218,10 +239,8 @@ public class FragmentoMiembrosGrupo extends Fragment {
                             else {
                                 adaptador.getElementoLista(pos).setNombre(n);
                                 adaptador.getElementoLista(pos).setEmail(email.getText().toString());
-                                if(spinner.getSelectedItemPosition()!=1)
-                                {
-                                    //Busco en la lista de miembros la posicion de este elemento
-                                }
+                                adaptador.getElementoLista(pos).setRestriccion(adaptador.buscarMiembro((String)spinner.getSelectedItem()));
+                                adaptador.notifyItemChanged(pos);
                             }
                         }
 
