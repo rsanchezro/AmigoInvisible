@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ public class FragmentoMiembrosGrupo extends Fragment {
         //Preparo el recyclerview
         preparar_ReciclerView(v, R.id.recycler_listado_miembros);
         FloatingActionButton f = v.findViewById(R.id.fab_miembros_grupo);
+        //SI PULSO EN EL FLOATING BUTTON ABRO UN DIALOGO PARA AÑADIR UN NUEVO AMIGO A LA LISTA
         f.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,31 +131,20 @@ public class FragmentoMiembrosGrupo extends Fragment {
         //Añadir divisor
         recyclerView.addItemDecoration(new DividerItemDecoration(contexto, DividerItemDecoration.VERTICAL));
 
-
+        //Defino el adaptador del RecyclerView
         adaptador = new AdaptadorMiembroGrupo(this.contexto, R.layout.elementomiembro, MainActivity.adaptador.getElementoLista(posicion).getMiembros());
 
-        adaptador.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-
-                return true;
-            }
-        });
+        //SI SE HACE CLICK EN UN ELEMENTO DE LA LISTA, ABRO UN DIALOGO PARA PODER EDITARLO
         adaptador.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
                 //Para conocer en que elemento se ha hecho click
                 //El objeto View representa un elemento de la lista
-
                final int pos = recyclerView.getChildAdapterPosition(v);
-
-
+                Log.i("Informacion","Posicion"+pos);
                 //Abrir dialogo para editar un amigo en la lista de amigos
-
-
-               //Preparo los datos del spinner
+               //Preparo los datos del spinner, solo van a aparecer los nombres de los miembros
+                //Excepto el mismo
                 ArrayList<String> nombremiembros = new ArrayList<String>();
                 nombremiembros.add("");
                 for (Miembro m : MainActivity.adaptador.getElementoLista(posicion).getMiembros()) {
@@ -161,15 +152,13 @@ public class FragmentoMiembrosGrupo extends Fragment {
                         nombremiembros.add(m.getNombre());
                     }
                 }
-
-
                 AlertDialog.Builder builderDialog = new AlertDialog.Builder(getActivity());
-
                 builderDialog.setTitle("EDICION DE "+ adaptador.getElementoLista(pos));
                 //De esta forma evitamos que al pulsar el boton de atras salgamos del cuadro de dialogo
                 builderDialog.setCancelable(false);
-                builderDialog.setView(getActivity().getLayoutInflater().inflate(R.layout.edicionmiembro_layout,null));
-
+                //Inflo la vista desde el XML Layout
+                View vis=getActivity().getLayoutInflater().inflate(R.layout.edicionmiembro_layout,null);
+                builderDialog.setView(vis);
 
                 builderDialog.setPositiveButton("EDITAR", new DialogInterface.OnClickListener() {
                     @Override
@@ -184,40 +173,39 @@ public class FragmentoMiembrosGrupo extends Fragment {
                         dialog.dismiss();
                     }
                 });
+
                 final AlertDialog dialogo = builderDialog.create();
+                //Obtengo las referencias a los elementos del dialogo
+                final EditText nombre=(EditText)vis.findViewById(R.id.Nombre_miembro_ed);
+                final EditText email=(EditText)vis.findViewById(R.id.email_miembro_ed);
+                final Spinner spinner=(Spinner)vis.findViewById(R.id.spinner_restriccion);
 
-                final EditText nombre=(EditText)dialogo.findViewById(R.id.Nombre_miembro_ed);
-                final EditText email=(EditText)dialogo.findViewById(R.id.email_miembro_ed);
-                final Spinner spinner=(Spinner)dialogo.findViewById(R.id.spinner_restriccion);
-
-
+                //Defino el Adapter del Spinner
                 ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,nombremiembros); //selected item will look like a spinner set from XML
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(spinnerArrayAdapter);
-                //Añado los datos al spinner
 
                 //Establezco los valores a cada elemento
                 nombre.setText(adaptador.getElementoLista(pos).getNombre());
                 email.setText(adaptador.getElementoLista(pos).getEmail());
                 Miembro restriccion=adaptador.getElementoLista(pos).getRestriccion();
+                //Si el miembro tiene restricción, tendré que averiguar quien es
                 if(restriccion!=null) {
                     //Tendre que averiguar que elemento de la lista es el que tiene en la restriccion,
                     //para marcarlo
                     int i=1;
-                    boolean encotrado=false;
-                    while((i<spinner.getAdapter().getCount())&&!encotrado)
+                    boolean encontrado=false;
+                    while((i<spinner.getAdapter().getCount())&&!encontrado)
                     {
                         if(((String)spinner.getAdapter().getItem(i)).equals(restriccion.getNombre()))
                         {
-                            encotrado=true;
+                            encontrado=true;
                         }
                         else {
                             i++;
                         }
                     }
                     spinner.setSelection(i);
-
-
                 }
                 //Para evitar salir del cuadro de dialogo
                 dialogo.setCanceledOnTouchOutside(false);
@@ -231,12 +219,13 @@ public class FragmentoMiembrosGrupo extends Fragment {
                         //Guardo los cambios siempre y cuando haya nombre y no sea repetido
                         if(!n.equals(""))
                         {
-                            if(MainActivity.adaptador.getElementoLista(posicion).buscarMiembro(n))
+                            //Si se ha modificado el nombre del miembro y ya esta en la lista
+                            if((!n.equals(adaptador.getElementoLista(pos).getNombre()))&&(MainActivity.adaptador.getElementoLista(posicion).buscarMiembro(n)))
                             {
                                 Toast.makeText(getActivity(),"MIEMBRO REPETIDO",Toast.LENGTH_SHORT).show();
-                                dialogo.dismiss();
                             }
                             else {
+                                //Modifico los datos del usuario
                                 adaptador.getElementoLista(pos).setNombre(n);
                                 adaptador.getElementoLista(pos).setEmail(email.getText().toString());
                                 adaptador.getElementoLista(pos).setRestriccion(adaptador.buscarMiembro((String)spinner.getSelectedItem()));
@@ -244,11 +233,8 @@ public class FragmentoMiembrosGrupo extends Fragment {
                             }
                         }
 
-
-
+                        dialogo.dismiss();
                     }
-
-
                 });
             }
         });

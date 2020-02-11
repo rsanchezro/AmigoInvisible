@@ -74,6 +74,7 @@ public class AdaptadorMiembroGrupo extends RecyclerView.Adapter<AdaptadorMiembro
 
         if(holder.elemento.getRestriccion()!=null) {
             holder.restriccion.setText(holder.elemento.getRestriccion().getNombre());
+            holder.linear.setVisibility(View.VISIBLE);
         }
         else {
             holder.linear.setVisibility(View.GONE);
